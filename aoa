@@ -1,0 +1,654 @@
+    int arr[n];
+    printf("Enter the elements of the array: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    int min, max;
+    findMinMax(arr, 0, n - 1, &min, &max);
+
+    printf("Minimum element: %d\n", min);
+    printf("Maximum element: %d\n", max);
+
+    return 0;
+}
+
+_____________________________________________________________________________________
+longest common subsequence 
+
+#include <stdio.h>
+#include <string.h>
+
+// Function to find the length of the longest common subsequence
+int lcs(char *X, char *Y, int m, int n) {
+    int L[m + 1][n + 1];
+    int i, j;
+
+    // Building the L[m+1][n+1] table in bottom-up manner
+    for (i = 0; i <= m; i++) {
+        for (j = 0; j <= n; j++) {
+            if (i == 0 || j == 0) {
+                L[i][j] = 0;
+            } else if (X[i - 1] == Y[j - 1]) {
+                L[i][j] = L[i - 1][j - 1] + 1;
+            } else {
+                L[i][j] = (L[i - 1][j] > L[i][j - 1]) ? L[i - 1][j] : L[i][j - 1];
+            }
+        }
+    }
+
+    // L[m][n] contains the length of LCS of X[0..m-1] and Y[0..n-1]
+    return L[m][n];
+}
+
+int main() {
+    char X[] = "AGGTAB";
+    char Y[] = "GXTXAYB";
+
+    int m = strlen(X);
+    int n = strlen(Y);
+
+    printf("Length of Longest Common Subsequence: %d\n", lcs(X, Y, m, n));
+
+    return 0;
+}
+
+____________________________________________________________________________________
+NAive algo âœ…
+
+#include <stdio.h>
+#include <string.h>
+
+void search(char *pat, char *txt)
+{
+    int M = strlen(pat);
+    int N = strlen(txt); // N > M
+
+    // A loop to slide pat[] one by one
+    for (int i = 0; i <= N - M; i++)
+    {
+
+        int j;
+        // For current index i, check for pattern match
+        for (j = 0; j < M; j++)
+        {
+            if (txt[i + j] != pat[j])
+            {
+                break;
+            }
+        }
+
+        // If pattern matches at index i  means the array has fully traversed
+        if (j == M)
+        {
+            printf("Pattern found at index %d\n", i);
+        }
+    }
+}
+
+int main()
+{
+    // Example 1
+    char txt1[] = "AABAACAADAABAABA";
+    char pat1[] = "AABA";
+    printf("Example 1:\n");
+    search(pat1, txt1);
+
+
+    char txt2[]= "AAAAAAAAAAAAAA";
+    char pat2[]="AAAAAA";
+    search(pat2,txt2);
+
+    return 0;
+}
+_____________________________________________________________________________________
+INSertion sort
+
+#include <stdio.h>
+
+// Function to perform Insertion Sort
+void insertionSort(int arr[], int n) {
+    int i, key, j;
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
+
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Function to print an array
+void printArray(int arr[], int n) {
+    int i;
+    for (i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+    
+   int n;
+   printf("Enter the size of the array!: ");
+   scanf("%d",&n);
+   
+   int arr[n];
+   printf("Enter the elements of the array !");
+   for( int i=0;i<n;i++){
+       scanf("%d",&arr[i]);
+   }
+
+    printf("Unsorted array: \n");
+    printArray(arr, n);
+
+    insertionSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+_____________________________________________________________________________________
+Selection sort
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to perform Selection Sort
+void selectionSort(int arr[], int n) {
+    int i, j, min_idx;
+
+    // One by one move the boundary of unsorted subarray
+    for (i = 0; i < n - 1; i++) {
+        // Find the minimum element in the unsorted array
+        min_idx = i;
+        for (j = i + 1; j < n; j++) {
+            if (arr[j] < arr[min_idx])
+                min_idx = j;
+        }
+
+        // Swap the found minimum element with the first element
+        int temp = arr[min_idx];
+        arr[min_idx] = arr[i];
+        arr[i] = temp;
+    }
+}
+
+// Function to print an array
+void printArray(int arr[], int n) {
+    int i;
+    for (i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+   int n;
+   printf("Enter the size of the array!: ");
+   scanf("%d",&n);
+   
+   // Dynamically allocate memory for the array
+   int *arr = (int *)malloc(n * sizeof(int));
+   if (arr == NULL) {
+       printf("Memory allocation failed.\n");
+       return 1;
+   }
+
+   printf("Enter the elements of the array !: ");
+   for( int i = 0; i < n; i++) {
+       scanf("%d", &arr[i]);
+   }
+   
+    printf("Unsorted array: \n");
+    printArray(arr, n);
+
+    selectionSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    // Free dynamically allocated memory
+    free(arr);
+
+    return 0;
+}
+
+_____________________________________________________________________________________
+quick sort
+
+#include <stdio.h>
+
+// Swap function to swap two elements
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Partition function to partition the array and return the pivot index
+int partition(int arr[], int low, int high) {
+    int pivot = arr[low]; // Choose the leftmost element as pivot
+    int i = low;          // Index of the pivot element
+
+    for (int j = low + 1; j <= high; j++) {
+        // If current element is smaller than pivot
+        if (arr[j] < pivot) {
+            i++; // Increment index of smaller element
+            swap(&arr[i], &arr[j]); // Swap arr[i] and arr[j]
+        }
+    }
+    swap(&arr[low], &arr[i]); // Swap pivot (arr[low]) with arr[i]
+    return i; // Return the partitioning index
+}
+
+// Quick Sort function
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        // Partition the array and get the pivot index
+        int pi = partition(arr, low, high);
+
+        // Recursively sort elements before partition and after partition
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+// Function to print an array
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+// Main function
+int main() {
+    int arr[] = {10, 7, 8, 9, 1, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Unsorted array: \n");
+    printArray(arr, n);
+
+    quickSort(arr, 0, n - 1);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+    return 0;
+}
+
+
+_____________________________________________________________________________
+merge sort 
+#include <stdio.h>
+
+void merge(int arr[], int start, int mid, int end);
+
+void divide(int arr[], int start, int end) {
+    int mid = start + (end - start) / 2;
+
+    if (start < end) {
+        divide(arr, start, mid);
+        divide(arr, mid + 1, end);
+        merge(arr, start, mid, end);
+    }
+}
+
+void merge(int arr[], int start, int mid, int end) {
+    int temp[100];
+    int x = start, y = mid + 1, z = 0;
+
+    while (x <= mid && y <= end) {
+        if (arr[x] < arr[y]) {
+            temp[z++] = arr[x++];
+        } else {
+            temp[z++] = arr[y++];
+        }
+    }
+
+    while (x <= mid) {
+        temp[z++] = arr[x++];
+    }
+
+    while (y <= end) {
+        temp[z++] = arr[y++];
+    }
+
+    for (int i = start; i <= end; i++) {
+        arr[i] = temp[i - start];
+    }
+}
+
+int main() {
+    int n, arr[100];
+    printf("Enter the size of the array: ");
+    scanf("%d", &n);
+
+    printf("Enter the elements: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    divide(arr, 0, n - 1);
+
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+______________________________________________________________________________
+Fractional knapsack 
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent an item
+struct Item {
+    int value;   // Value of the item
+    int weight;  // Weight of the item
+    float ratio; // Value-to-weight ratio of the item
+};
+
+// Function to compare two items based on their value-to-weight ratios (for sorting)
+int compare(const void *a, const void *b) {
+    struct Item *item1 = (struct Item *)a;
+    struct Item *item2 = (struct Item *)b;
+    return (item2->ratio - item1->ratio);
+}
+
+// Function to solve the Fractional Knapsack problem
+float fractionalKnapsack(struct Item items[], int n, int capacity) {
+    // Sort items based on their value-to-weight ratios in non-increasing order
+    qsort(items, n, sizeof(struct Item), compare);
+
+    float totalValue = 0.0; // Total value of items selected for the knapsack
+    int currentWeight = 0;  // Current weight of items in the knapsack
+
+    // Iterate through the sorted items
+    for (int i = 0; i < n; i++) {
+        // If the entire item can be added to the knapsack
+        if (currentWeight + items[i].weight <= capacity) {
+            totalValue += items[i].value;
+            currentWeight += items[i].weight;
+        }
+        // If only a fraction of the item can be added
+        else {
+            int remainingWeight = capacity - currentWeight;
+            totalValue += (items[i].ratio * remainingWeight);
+            break; // Knapsack is full
+        }
+    }
+    return totalValue;
+}
+
+int main() {
+    // Example usage
+    struct Item items[] = {{60, 10}, {100, 20}, {120, 30}};
+    int n = sizeof(items) / sizeof(items[0]);
+    int capacity = 50;
+
+    // Calculate the maximum value that can be obtained
+    float maxValue = fractionalKnapsack(items, n, capacity);
+
+    printf("Maximum value obtainable: %.2f\n", maxValue);
+
+    return 0;
+}
+
+__________________________________________________________________________________________
+prims algo
+
+#include <stdio.h>
+#include <limits.h>
+
+#define V 6 // Number of vertices
+
+int selectMinVertex(int value[], int setMST[]) {
+    int minimum = INT_MAX;
+    int vertex;
+    for (int i = 0; i < V; ++i) {
+        if (setMST[i] == 0 && value[i] < minimum) {
+            vertex = i;
+            minimum = value[i];
+        }
+    }
+    return vertex;
+}
+
+void findMST(int graph[V][V]) {
+    int parent[V];          // Stores MST
+    int value[V];           // Used for edge relaxation
+    int setMST[V] = {0};    // TRUE->Vertex is included in MST
+
+    // Assuming start point as Node-0
+    parent[0] = -1; // Start node has no parent
+    value[0] = 0;   // Start node has value=0 to get picked 1st
+
+    // Form MST with (V-1) edges
+    for (int i = 0; i < V - 1; ++i) {
+        int U = selectMinVertex(value, setMST);
+        setMST[U] = 1;  // Include new Vertex in MST
+
+        // Relax adjacent vertices (not yet included in MST)
+        for (int j = 0; j < V; ++j) {
+if (graph[U][j] != 0 && setMST[j] == 0 && graph[U][j] < value[j]) {
+                value[j] = graph[U][j];
+                parent[j] = U;
+            }
+        }
+    }
+    // Print MST
+    for (int i = 1; i < V; ++i)
+        printf("U->V: %d->%d  wt = %d\n", parent[i], i, graph[parent[i]][i]);
+}
+
+int main() {
+    int graph[V][V] = {{0, 4, 6, 0, 0, 0},
+                       {4, 0, 6, 3, 4, 0},
+                       {6, 6, 0, 1, 8, 0},
+                       {0, 3, 1, 0, 2, 3},
+                       {0, 4, 8, 2, 0, 7},
+                       {0, 0, 0, 3, 7, 0}};
+
+    findMST(graph);
+    return 0;
+}
+
+-----------------------------------------------------------------------------------------
+Kruskal algo 
+
+#include <stdio.h>
+
+#define MAX_VERTICES 100
+#define MAX_EDGES 100
+
+// Structure to represent an edge in the graph
+struct Edge {
+    int src, dest, weight;
+};
+
+// Function prototypes
+void kruskalMST(int graph[MAX_VERTICES][MAX_VERTICES], int V);
+
+int main() {
+    // Example graph represented as an adjacency matrix
+    int V = 6; // Number of vertices
+    int graph[MAX_VERTICES][MAX_VERTICES] = {
+        {0, 4, 4, 0, 0, 0},
+        {4, 0, 2, 0, 0, 0},
+        {4, 2, 0, 3, 0, 0},
+        {0, 0, 3, 0, 5, 0},
+        {0, 0, 0, 5, 0, 1},
+        {0, 0, 0, 0, 1, 0}
+    };
+
+    kruskalMST(graph, V);
+
+    return 0;
+}
+
+// Function to implement Kruskal's algorithm for finding MST
+void kruskalMST(int graph[MAX_VERTICES][MAX_VERTICES], int V) {
+    // Initialize result array to store MST edges
+    struct Edge result[V];
+    int resultCount = 0;
+
+    // Process all edges in the graph
+    for (int src = 0; src < V; src++) {
+        for (int dest = src + 1; dest < V; dest++) {
+            int weight = graph[src][dest];
+            if (weight != 0) {
+                // Add edge to result array
+                result[resultCount].src = src;
+                result[resultCount].dest = dest;
+                result[resultCount].weight = weight;
+                resultCount++;
+            }
+        }
+    }
+
+    // Print the MST edges
+    printf("Edges in the MST:\n");
+    for (int i = 0; i < resultCount; i++) {
+        printf("%d - %d\t(weight: %d)\n", result[i].src, result[i].dest, result[i].weight);
+    }
+}
+----------------------------------------------------------------------------------------------------
+Write a program to implement Job Sequencing with Deadline using greedy approach
+
+#include <stdio.h>
+
+#define MAX_JOBS 100
+
+// Structure to represent a job
+struct Job {
+    char id;
+    int deadline;
+    int profit;
+};
+
+// Function to sort jobs by profit in descending order
+void sortJobs(struct Job arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        struct Job key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j].profit < key.profit) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Function to perform job sequencing with deadline using greedy approach
+void jobSequencing(struct Job jobs[], int n) {
+    sortJobs(jobs, n);
+    
+    int result[MAX_JOBS]; // Array to store result (job sequence)
+    int slot[MAX_JOBS] = {0}; // Array to track available slots
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = jobs[i].deadline - 1; j >= 0; j--) {
+            if (slot[j] == 0) {
+                result[j] = i;
+                slot[j] = 1;
+                break;
+            }
+        }
+    }
+    
+    // Print the job sequence
+    printf("Job Sequence with Deadline:\n");
+    for (int i = 0; i < n; i++) {
+        if (slot[i] == 1) {
+            printf("%c ", jobs[result[i]].id);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Job jobs[] = {
+        {'a', 2, 100},
+        {'b', 1, 19},
+        {'c', 2, 27},
+        {'d', 1, 25},
+        {'e', 3, 15}
+    };
+    int n = sizeof(jobs) / sizeof(jobs[0]);
+    
+    jobSequencing(jobs, n);
+    
+    return 0;
+}
+_____________________________________________________________________________
+
+13. Write a program to implement N-Queenâ€™s using backtracking
+
+#include <stdio.h>
+#define N 4
+
+int board[N][N];
+
+// Function to check if it's safe to place a queen at board[row][col]
+int isSafe(int row, int col) {
+    int i, j;
+    
+    // Check row on left side
+    for (i = 0; i < col; i++)
+        if (board[row][i])
+            return 0;
+    
+    // Check upper diagonal on left side
+    for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
+        if (board[i][j])
+            return 0;
+    
+    // Check lower diagonal on left side
+    for (i = row, j = col; j >= 0 && i < N; i++, j--)
+        if (board[i][j])
+            return 0;
+    
+    return 1;
+}
+
+// Function to solve N-Queens problem using backtracking
+int solveNQueens(int col) {
+    if (col >= N)
+        return 1;
+    
+    for (int i = 0; i < N; i++) {
+        if (isSafe(i, col)) {
+            board[i][col] = 1;
+            if (solveNQueens(col + 1))
+                return 1;
+            board[i][col] = 0;
+        }
+    }
+    
+    return 0;
+}
+
+// Function to print the solution
+void printSolution() {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++)
+            printf("%d ", board[i][j]);
+        printf("\n");
+    }
+}
+
+int main() {
+    if (solveNQueens(0) == 0) {
+        printf("Solution does not exist");
+    } else {
+        printf("Solution:\n");
+        printSolution();
+    }
+    return 0;
+}
